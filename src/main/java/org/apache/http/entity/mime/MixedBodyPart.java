@@ -36,14 +36,14 @@ import org.apache.http.entity.mime.content.ContentBody;
  *
  * @since 4.0
  */
-public class FormBodyPart implements MultipartBodyPart {
+public class MixedBodyPart implements MultipartBodyPart {
 
     private final String name;
     private final Header header;
 
-    private ContentBody body;
+    private final ContentBody body;
 
-    public FormBodyPart(final String name, final ContentBody body) {
+    public MixedBodyPart(final String name, final ContentBody body) {
         super();
         if (name == null) {
             throw new IllegalArgumentException("Name may not be null");
@@ -58,6 +58,7 @@ public class FormBodyPart implements MultipartBodyPart {
         generateContentDisp(body);
         generateContentType(body);
         generateTransferEncoding(body);
+        generateTransferID();
     }
 
     /* (non-Javadoc)
@@ -96,7 +97,7 @@ public class FormBodyPart implements MultipartBodyPart {
     }
 
     protected void generateContentDisp(final ContentBody body) {
-        StringBuilder buffer = new StringBuilder();
+        final StringBuilder buffer = new StringBuilder();
         buffer.append("form-data; name=\"");
         buffer.append(getName());
         buffer.append("\"");
@@ -110,7 +111,7 @@ public class FormBodyPart implements MultipartBodyPart {
 
     protected void generateContentType(final ContentBody body) {
         if (body.getMimeType() != null) {
-            StringBuilder buffer = new StringBuilder();
+            final StringBuilder buffer = new StringBuilder();
             buffer.append(body.getMimeType());
             if (body.getCharset() != null) {
                 buffer.append("; charset=");
@@ -124,6 +125,15 @@ public class FormBodyPart implements MultipartBodyPart {
         if (body.getTransferEncoding() != null) {
             addField(MIME.CONTENT_TRANSFER_ENC, body.getTransferEncoding());
         }
+    }
+    
+    protected void generateTransferID() {
+    	final StringBuilder buffer = new StringBuilder();
+        buffer.append("<");
+        buffer.append(getName());
+        buffer.append(">");
+        addField(MIME.CONTENT_ID, buffer.toString());
+        
     }
 
 }

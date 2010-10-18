@@ -31,65 +31,51 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
-
-import org.apache.http.annotation.ThreadSafe;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
-import org.apache.james.mime4j.field.Fields;
-import org.apache.james.mime4j.message.Message;
 
 /**
- * Multipart/form coded HTTP entity consisting of multiple
- * body parts. 
- * 
+ * Multipart/form coded HTTP entity consisting of multiple body parts.
  *
  * @since 4.0
  */
-@ThreadSafe
 public class MultipartEntity implements HttpEntity {
 
     /**
      * The pool of ASCII chars to be used for generating a multipart boundary.
      */
-    private final static char[] MULTIPART_CHARS = 
+    private final static char[] MULTIPART_CHARS =
         "-_1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
             .toCharArray();
-    
-    private final Message message;
+
     private final HttpMultipart multipart;
     private final Header contentType;
-    
+
     private long length;
     private volatile boolean dirty; // used to decide whether to recalculate length
-    
+
     public MultipartEntity(
-            HttpMultipartMode mode, 
-            final String boundary,
+            HttpMultipartMode mode,
+            String boundary,
             final Charset charset) {
         super();
-        this.multipart = new HttpMultipart("form-data");
+        if (boundary == null) {
+            boundary = generateBoundary();
+        }
+        this.multipart = new HttpMultipart("form-data", charset, boundary);
         this.contentType = new BasicHeader(
                 HTTP.CONTENT_TYPE,
                 generateContentType(boundary, charset));
         this.dirty = true;
-        
-        this.message = new Message();
-        org.apache.james.mime4j.message.Header header = 
-          new org.apache.james.mime4j.message.Header();
-        this.message.setHeader(header);
-        this.multipart.setParent(message);
         if (mode == null) {
             mode = HttpMultipartMode.STRICT;
         }
         this.multipart.setMode(mode);
-        this.message.getHeader().addField(Fields.contentType(this.contentType.getValue()));
     }
 
     public MultipartEntity(final HttpMultipartMode mode) {
@@ -103,17 +89,9 @@ public class MultipartEntity implements HttpEntity {
     protected String generateContentType(
             final String boundary,
             final Charset charset) {
-        StringBuilder buffer = new StringBuilder();
+        final StringBuilder buffer = new StringBuilder();
         buffer.append("multipart/form-data; boundary=");
-        if (boundary != null) {
-            buffer.append(boundary);
-        } else {
-            Random rand = new Random();
-            int count = rand.nextInt(11) + 30; // a random size from 30 to 40
-            for (int i = 0; i < count; i++) {
-                buffer.append(MULTIPART_CHARS[rand.nextInt(MULTIPART_CHARS.length)]);
-            }
-        }
+        buffer.append(boundary);
         if (charset != null) {
             buffer.append("; charset=");
             buffer.append(charset.name());
@@ -121,16 +99,29 @@ public class MultipartEntity implements HttpEntity {
         return buffer.toString();
     }
 
-    public void addPart(final String name, final ContentBody contentBody) {
-        this.multipart.addBodyPart(new FormBodyPart(name, contentBody));
+    protected String generateBoundary() {
+        final StringBuilder buffer = new StringBuilder();
+        final Random rand = new Random();
+        final int count = rand.nextInt(11) + 30; // a random size from 30 to 40
+        for (int i = 0; i < count; i++) {
+            buffer.append(MULTIPART_CHARS[rand.nextInt(MULTIPART_CHARS.length)]);
+        }
+        return buffer.toString();
+    }
+
+    public void addPart(final MultipartBodyPart bodyPart) {
+        this.multipart.addBodyPart(bodyPart);
         this.dirty = true;
     }
-  
-    public boolean isRepeatable() {
-        List<?> parts = this.multipart.getBodyParts();
-        for (Iterator<?> it = parts.iterator(); it.hasNext(); ) {
-            FormBodyPart part = (FormBodyPart) it.next();
-            ContentBody body = (ContentBody) part.getBody();
+
+    public void addPart(final String name, final ContentBody contentBody) {
+        addPart(new FormBodyPart(name, contentBody));
+    }
+
+    @Override
+	public boolean isRepeatable() {
+        for (final MultipartBodyPart part: this.multipart.getBodyParts()) {
+            final ContentBody body = part.getBody();
             if (body.getContentLength() < 0) {
                 return false;
             }
@@ -138,15 +129,18 @@ public class MultipartEntity implements HttpEntity {
         return true;
     }
 
-    public boolean isChunked() {
+    @Override
+	public boolean isChunked() {
         return !isRepeatable();
     }
 
-    public boolean isStreaming() {
+    @Override
+	public boolean isStreaming() {
         return !isRepeatable();
     }
 
-    public long getContentLength() {
+    @Override
+	public long getContentLength() {
         if (this.dirty) {
             this.length = this.multipart.getTotalLength();
             this.dirty = false;
@@ -154,15 +148,18 @@ public class MultipartEntity implements HttpEntity {
         return this.length;
     }
 
-    public Header getContentType() {
+    @Override
+	public Header getContentType() {
         return this.contentType;
     }
 
-    public Header getContentEncoding() {
+    @Override
+	public Header getContentEncoding() {
         return null;
     }
 
-    public void consumeContent()
+    @Override
+	public void consumeContent()
         throws IOException, UnsupportedOperationException{
         if (isStreaming()) {
             throw new UnsupportedOperationException(
@@ -170,12 +167,14 @@ public class MultipartEntity implements HttpEntity {
         }
     }
 
-    public InputStream getContent() throws IOException, UnsupportedOperationException {
+    @Override
+	public InputStream getContent() throws IOException, UnsupportedOperationException {
         throw new UnsupportedOperationException(
                     "Multipart form entity does not implement #getContent()");
     }
 
-    public void writeTo(final OutputStream outstream) throws IOException {
+    @Override
+	public void writeTo(final OutputStream outstream) throws IOException {
         this.multipart.writeTo(outstream);
     }
 

@@ -24,79 +24,75 @@
  * <http://www.apache.org/>.
  *
  */
-
 package org.apache.http.entity.mime.content;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.http.entity.mime.MIME;
+import org.apache.http.entity.mime.content.AbstractContentBody;
 
 /**
+ * Body part that is built using a byte array containing a file.
  *
- * @since 4.0
+ * @since 4.1
  */
-public class InputStreamBody extends AbstractContentBody {
+public class ByteArrayBody extends AbstractContentBody {
 
-    private final InputStream in;
+    /**
+     * The contents of the file contained in this part.
+     */
+    private final byte[] data;
+
+    /**
+     * The name of the file contained in this part.
+     */
     private final String filename;
 
-    public InputStreamBody(final InputStream in, final String mimeType, final String filename) {
+    /**
+     * Creates a new ByteArrayBody.
+     *
+     * @param data The contents of the file contained in this part.
+     * @param mimeType The mime type of the file contained in this part.
+     * @param filename The name of the file contained in this part.
+     */
+    public ByteArrayBody(final byte[] data, final String mimeType, final String filename) {
         super(mimeType);
-        if (in == null) {
-            throw new IllegalArgumentException("Input stream may not be null");
+        if (data == null) {
+            throw new IllegalArgumentException("byte[] may not be null");
         }
-        this.in = in;
+        this.data = data;
         this.filename = filename;
     }
 
-    public InputStreamBody(final InputStream in, final String filename) {
-        this(in, "application/octet-stream", filename);
-    }
-
-    public InputStream getInputStream() {
-        return this.in;
-    }
-
     /**
-     * @deprecated use {@link #writeTo(OutputStream)}
+     * Creates a new ByteArrayBody.
+     *
+     * @param data The contents of the file contained in this part.
+     * @param filename The name of the file contained in this part.
      */
-    @Deprecated
-    public void writeTo(final OutputStream out, int mode) throws IOException {
-        writeTo(out);
+    public ByteArrayBody(final byte[] data, final String filename) {
+        this(data, "application/octet-stream", filename);
+    }
+
+    public String getFilename() {
+        return filename;
     }
 
     public void writeTo(final OutputStream out) throws IOException {
-        if (out == null) {
-            throw new IllegalArgumentException("Output stream may not be null");
-        }
-        try {
-            byte[] tmp = new byte[4096];
-            int l;
-            while ((l = this.in.read(tmp)) != -1) {
-                out.write(tmp, 0, l);
-            }
-            out.flush();
-        } finally {
-            this.in.close();
-        }
-    }
-
-    public String getTransferEncoding() {
-        return MIME.ENC_BINARY;
+        out.write(data);
     }
 
     public String getCharset() {
         return null;
     }
 
-    public long getContentLength() {
-        return -1;
+    public String getTransferEncoding() {
+        return MIME.ENC_BINARY;
     }
 
-    public String getFilename() {
-        return this.filename;
+    public long getContentLength() {
+        return data.length;
     }
 
 }

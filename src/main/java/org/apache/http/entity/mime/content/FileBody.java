@@ -33,31 +33,54 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.http.annotation.NotThreadSafe;
-
 import org.apache.http.entity.mime.MIME;
 
 /**
  *
  * @since 4.0
  */
-@NotThreadSafe // parent is @NotThreadSafe
 public class FileBody extends AbstractContentBody {
 
     private final File file;
-    
-    public FileBody(final File file, final String mimeType) {
+    private final String filename;
+    private final String charset;
+
+    /**
+     * @since 4.1
+     */
+    public FileBody(final File file,
+                    final String filename,
+                    final String mimeType,
+                    final String charset) {
         super(mimeType);
         if (file == null) {
             throw new IllegalArgumentException("File may not be null");
         }
         this.file = file;
+        if (filename != null)
+            this.filename = filename;
+        else
+            this.filename = file.getName();
+        this.charset = charset;
     }
-    
+
+    /**
+     * @since 4.1
+     */
+    public FileBody(final File file,
+                    final String mimeType,
+                    final String charset) {
+        this(file, null, mimeType, charset);
+    }
+
+    public FileBody(final File file, final String mimeType) {
+        this(file, mimeType, null);
+    }
+
     public FileBody(final File file) {
         this(file, "application/octet-stream");
     }
-    
+
     public InputStream getInputStream() throws IOException {
         return new FileInputStream(this.file);
     }
@@ -70,7 +93,6 @@ public class FileBody extends AbstractContentBody {
         writeTo(out);
     }
 
-    @Override
     public void writeTo(final OutputStream out) throws IOException {
         if (out == null) {
             throw new IllegalArgumentException("Output stream may not be null");
@@ -93,17 +115,17 @@ public class FileBody extends AbstractContentBody {
     }
 
     public String getCharset() {
-        return null;
+        return charset;
     }
 
     public long getContentLength() {
         return this.file.length();
     }
-    
+
     public String getFilename() {
-        return this.file.getName();
+        return filename;
     }
-    
+
     public File getFile() {
         return this.file;
     }

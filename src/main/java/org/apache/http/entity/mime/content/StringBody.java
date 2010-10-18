@@ -35,10 +35,6 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.http.annotation.NotThreadSafe;
 
 import org.apache.http.entity.mime.MIME;
 
@@ -46,15 +42,43 @@ import org.apache.http.entity.mime.MIME;
  *
  * @since 4.0
  */
-@NotThreadSafe // parent is @NotThreadSafe
 public class StringBody extends AbstractContentBody {
 
     private final byte[] content;
     private final Charset charset;
-    
+
+    /**
+     * @since 4.1
+     */
+    public static StringBody create(
+            final String text,
+            final String mimeType,
+            final Charset charset) throws IllegalArgumentException {
+        try {
+            return new StringBody(text, mimeType, charset);
+        } catch (UnsupportedEncodingException ex) {
+            throw new IllegalArgumentException("Charset " + charset + " is not supported", ex);
+        }
+    }
+
+    /**
+     * @since 4.1
+     */
+    public static StringBody create(
+            final String text, final Charset charset) throws IllegalArgumentException {
+        return create(text, null, charset);
+    }
+
+    /**
+     * @since 4.1
+     */
+    public static StringBody create(final String text) throws IllegalArgumentException {
+        return create(text, null, null);
+    }
+
     public StringBody(
-            final String text, 
-            final String mimeType, 
+            final String text,
+            final String mimeType,
             Charset charset) throws UnsupportedEncodingException {
         super(mimeType);
         if (text == null) {
@@ -66,15 +90,15 @@ public class StringBody extends AbstractContentBody {
         this.content = text.getBytes(charset.name());
         this.charset = charset;
     }
-    
-    public StringBody(final String text, Charset charset) throws UnsupportedEncodingException {
+
+    public StringBody(final String text, final Charset charset) throws UnsupportedEncodingException {
         this(text, "text/plain", charset);
     }
-    
+
     public StringBody(final String text) throws UnsupportedEncodingException {
         this(text, "text/plain", null);
     }
-    
+
     public Reader getReader() {
         return new InputStreamReader(
                 new ByteArrayInputStream(this.content),
@@ -89,7 +113,6 @@ public class StringBody extends AbstractContentBody {
         writeTo(out);
     }
 
-    @Override
     public void writeTo(final OutputStream out) throws IOException {
         if (out == null) {
             throw new IllegalArgumentException("Output stream may not be null");
@@ -111,19 +134,12 @@ public class StringBody extends AbstractContentBody {
         return this.charset.name();
     }
 
-    @Override
-    public Map<String, String> getContentTypeParameters() {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("charset", this.charset.name());
-        return map;
-    }
-
     public long getContentLength() {
         return this.content.length;
     }
-    
+
     public String getFilename() {
         return null;
     }
-    
+
 }

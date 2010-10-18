@@ -23,21 +23,20 @@
 ~~ <http://www.apache.org/>.
 
     ----------
-    HttpComponents HttpClient Module
+    HttpComponents HttpMime Module
     ----------
     ----------
     ----------
 
-HttpClient
+HttpMime
 
-    This module extends {{{http://james.apache.org/mime4j/index.html}mime4j}} 
-    library with some HTTP specific functionality and integrates it with the 
-    HttpComponents framework.
+    This module provides support for MIME multipart encoded entities.
 
-    {{{apidocs/index.html}Javadocs}}
+    {{{./apidocs/index.html}Javadocs}}
     
-    {{{xref/index.html}Project sources}}
+    {{{./xref/index.html}Project sources}}
     
-    {{{dependencies.html}Dependencies}}    
+    {{{./dependencies.html}Dependencies}}    
     
-    {{{issue-tracking.html}Issue Tracking}}    
+    {{{./issue-tracking.html}Issue Tracking}}    
+

@@ -30,7 +30,7 @@
   <parent>
     <groupId>org.apache.httpcomponents</groupId>
     <artifactId>httpcomponents-client</artifactId>
-    <version>4.0.3</version>
+    <version>4.1-alpha3-SNAPSHOT</version>
   </parent>
   <artifactId>httpmime</artifactId>
   <name>HttpMime</name>
@@ -53,21 +53,13 @@
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
       <version>${httpcore.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>${pom.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.james</groupId>
-      <artifactId>apache-mime4j</artifactId>
-      <version>${mime4j.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>${commons-logging.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -138,16 +130,34 @@
           <archive>
             <manifestEntries>
               <Specification-Title>HttpComponents HttpMime</Specification-Title>
-              <Specification-Version>${pom.version}</Specification-Version>
+              <Specification-Version>${project.version}</Specification-Version>
               <Specification-Vendor>The Apache Software Foundation</Specification-Vendor>
               <Implementation-Title>HttpComponents HttpMime</Implementation-Title>
-              <Implementation-Version>${pom.version}</Implementation-Version>
+              <Implementation-Version>${project.version}</Implementation-Version>
               <Implementation-Vendor>The Apache Software Foundation</Implementation-Vendor>
               <Implementation-Vendor-Id>org.apache</Implementation-Vendor-Id>
-              <url>${pom.url}</url>
+              <url>${project.url}</url>
             </manifestEntries>
           </archive>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.atlassian.maven.plugins</groupId>
+        <artifactId>maven-clover2-plugin</artifactId>
+        <configuration>
+          <flushPolicy>threaded</flushPolicy>
+          <flushInterval>100</flushInterval>
+          <targetPercentage>50%</targetPercentage>
+        </configuration>
+        <executions>
+          <execution>
+            <id>site</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>instrument</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -162,7 +172,6 @@
           <links>
             <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
             <link>http://hc.apache.org/httpcomponents-core/httpcore/apidocs/</link>
-            <link>http://james.apache.org/mime4j/apidocs/</link>
           </links>
         </configuration>
         <reportSets>
