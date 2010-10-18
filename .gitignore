@@ -1,0 +1,9 @@
+build
+target*
+bin
+.classpath
+.project
+.settings
+src/META-INF
+.svn
+**/.svn
