@@ -210,7 +210,7 @@
   </reporting>
   <scm>
     <connection>scm:git:git://github.com:lolay/httpmime.git</connection>
-    <developerConnection>scm:git://git:git@github.com:lolay/httpmime.git</developerConnection>
+    <developerConnection>scm:git:git://git@github.com:lolay/httpmime.git</developerConnection>
     <url>http://github.com/lolay/httpmime.git</url>
   </scm>
 
