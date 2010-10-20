@@ -1,0 +1,5 @@
+Customizations to the Apache HTTP Components platform to support multipart/mixed.
+
+This is depending on the 4.1-alpha2 tag for dependencies/parent, but the actual
+code is from 4.1-alpha3 trunk (commit 1023336). This was chosen as the
+4.1-alpha3 had a few changes for multipart.

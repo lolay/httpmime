@@ -30,10 +30,10 @@
   <parent>
     <groupId>org.apache.httpcomponents</groupId>
     <artifactId>httpcomponents-client</artifactId>
-    <version>4.1-alpha3-SNAPSHOT</version>
+    <version>4.1-alpha2</version>
   </parent>
-  <artifactId>httpmime</artifactId>
-  <name>HttpMime</name>
+  <artifactId>httpmime-lolay</artifactId>
+  <name>HttpMime (Lolay)</name>
   <description>
    HttpComponents HttpClient - MIME coded entities
   </description>
