@@ -211,7 +211,7 @@
   <scm>
     <connection>scm:git:git:github.com/lolay/httpmime.git</connection>
     <developerConnection>scm:git:git:git@github.com:lolay/httpmime.git</developerConnection>
-    <url>scm:git:git:github.com/lolay/httpmime.git</url>
+    <url>scm:git:git://github.com/lolay/httpmime.git</url>
   </scm>
 
 </project>
