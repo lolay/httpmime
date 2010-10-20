@@ -209,9 +209,9 @@
     </plugins>
   </reporting>
   <scm>
-    <connection>scm:git://github.com/lolay/httpmime.git</connection>
-    <developerConnection>scm:git:git@github.com:lolay/httpmime.git</developerConnection>
-    <url>scm:git://github.com/lolay/httpmime.git</url>
+    <connection>scm:git:git://github.com/lolay/httpmime.git</connection>
+    <developerConnection>scm:git:git://git@github.com:lolay/httpmime.git</developerConnection>
+    <url>scm:git:git://github.com/lolay/httpmime.git</url>
   </scm>
 
 </project>
