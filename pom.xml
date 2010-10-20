@@ -162,7 +162,7 @@
       <plugin>
 	    <artifactId>maven-deploy-plugin</artifactId>
 	    <configuration>
-		  <altDeploymentRepository>site::default::file://~/Projects/lolay/site/maven</altDeploymentRepository>
+		  <altDeploymentRepository>site::default::${maven-site}</altDeploymentRepository>
 		</configuration>
 	  </plugin>
     </plugins>
