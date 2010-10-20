@@ -159,6 +159,12 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+	    <artifactId>maven-deploy-plugin</artifactId>
+	    <configuration>
+		  <altDeploymentRepository>site::default::file://~/Projects/lolay/site/maven</altDeploymentRepository>
+		</configuration>
+	  </plugin>
     </plugins>
   </build>
 
@@ -201,5 +207,10 @@
 
     </plugins>
   </reporting>
+  <scm>
+    <connection>scm:git://github.com/lolay/httpmime.git</connection>
+    <developerConnection>scm:git:git@github.com:lolay/httpmime.git</developerConnection>
+    <url>scm:git://github.com/lolay/httpmime.git</url>
+  </scm>
 
 </project>
