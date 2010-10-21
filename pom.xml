@@ -167,8 +167,8 @@
 		  <altDeploymentRepository>site::default::${maven-site}</altDeploymentRepository>
 		</configuration>
 	  </plugin>
+	-->
     </plugins>
--->
   </build>
 <!--
   <reporting>
