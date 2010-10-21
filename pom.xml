@@ -33,7 +33,7 @@
     <version>4.1-alpha2</version>
   </parent>
   <artifactId>httpmime-lolay</artifactId>
-  <version>4.1-alpha2-1-SNAPSHOT</version>
+  <version>4.1-alpha2-1</version>
   <name>HttpMime (Lolay)</name>
   <description>
    HttpComponents HttpClient - MIME coded entities
